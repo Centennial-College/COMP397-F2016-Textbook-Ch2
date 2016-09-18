@@ -19,6 +19,10 @@
         var square = new createjs.Shape(g);
         square.x = square.y = 100;
         stage.addChild(square);
+        var screen = new createjs.Shape();
+        screen.graphics.beginFill(createjs.Graphics.getRGB(0, 0, 0, 0.6));
+        screen.graphics.drawRect(0, 0, stage.canvas.width, stage.canvas.height);
+        stage.addChild(screen);
     }
     window.onload = setupStage;
 })();
