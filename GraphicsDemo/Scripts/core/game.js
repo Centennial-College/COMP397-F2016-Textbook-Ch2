@@ -16,8 +16,9 @@
             .beginFill('#f00')
             .drawRect(0, 0, 100, 100);
         var square = new createjs.Shape(g);
-        square.x = 150;
-        square.y = 100;
+        square.regX = square.regY = 50;
+        square.x = stage.canvas.width / 2;
+        square.y = stage.canvas.height / 2;
         stage.addChild(square);
         createjs.Tween.get(square).to({ rotation: 360 }, 3000);
     }
