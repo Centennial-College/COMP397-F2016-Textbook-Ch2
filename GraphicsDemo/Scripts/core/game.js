@@ -32,6 +32,32 @@
         circle.x = 250;
         circle.y = 70;
         stage.addChild(circle);
+        //STAR
+        var poly = new createjs.Shape();
+        poly.graphics.beginStroke('#000');
+        poly.graphics.beginFill('#90ABC2');
+        poly.graphics.drawPolyStar(0, 0, 60, 6, 0.6, 20);
+        poly.x = 400;
+        poly.y = 70;
+        stage.addChild(poly);
+        //TRIANGLE
+        var tri = new createjs.Shape();
+        tri.graphics.beginStroke('#000');
+        tri.graphics.beginFill('#0f0');
+        tri.graphics.moveTo(50, 0)
+            .lineTo(0, 100)
+            .lineTo(100, 100)
+            .lineTo(50, 0);
+        tri.x = 20;
+        tri.y = 150;
+        stage.addChild(tri);
+        //ROUNDED RECTANGLE
+        var roundedRectangle = new createjs.Shape();
+        roundedRectangle.graphics.beginStroke('#000');
+        roundedRectangle.graphics.beginFill('#f7d0d1');
+        roundedRectangle.graphics.drawRoundRect(0, 0, 400, 100, 10);
+        roundedRectangle.x = roundedRectangle.y = 150;
+        stage.addChild(roundedRectangle);
     }
     window.onload = setupStage;
 })();
