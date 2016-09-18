@@ -2,45 +2,57 @@
 
 (function () {
 
-    let stage = new createjs.Stage(document.getElementById('canvas'))
-    let direction = 1
-    let speed = 10
-    let circle = new createjs.Shape()
-    circle.graphics.beginStroke('#000')
-    circle.graphics.beginFill('#fff000')
-    circle.graphics.drawCircle(0, 0, 50)
-    circle.radius = 50
-    circle.x = 100
-    circle.y = 300
+    const LOADER_WIDTH = 400;
+    let stage: createjs.Stage, loaderBar: createjs.Shape, loadInterval;
+    let percentLoaded = 0;
 
-    stage.addChild(circle)
-
-    createjs.Ticker.on('tick', gameLoop)
-    createjs.Ticker.framerate = 60
-
-    function updateCircle(): void {
-        let nextX = circle.x + (speed * direction)
-        if (nextX > stage.canvas.width - circle.radius) {
-            nextX = stage.canvas.width - circle.radius
-            direction *= -1
-        }
-        else if (nextX < circle.radius) {
-            nextX = circle.radius
-            direction *= -1
-        }
-        circle.nextX = nextX
+    function init() {
+        setupStage();
+        buildLoaderBar();
+        startLoad();
     }
 
-    function renderCircle() {
-        circle.x = circle.nextX
+    function setupStage() {
+        stage = new createjs.Stage(document.getElementById('canvas'));
+        createjs.Ticker.framerate = 60;
+        createjs.Ticker.on('tick', (e) => {
+            stage.update();
+        });
     }
 
-    function gameLoop(e) {
-        if (!e.paused) {
-            updateCircle()
-            renderCircle()
-            stage.update()
+    function buildLoaderBar() {
+        loaderBar = new createjs.Shape();
+        loaderBar.x = loaderBar.y = 100;
+        loaderBar.graphics.setStrokeStyle(2);
+        loaderBar.graphics.beginStroke('#000');
+        loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH, 40);
+        stage.addChild(loaderBar);
+    }
+
+    function updateLoaderBar() {
+        loaderBar.graphics.clear();
+        loaderBar.graphics.beginFill('#0f0');
+        loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH * percentLoaded, 40);
+        loaderBar.graphics.endFill();
+        loaderBar.graphics.setStrokeStyle(2);
+        loaderBar.graphics.beginStroke('#000');
+        loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH, 40);
+        loaderBar.graphics.endStroke();
+    }
+
+    function startLoad() {
+        loadInterval = setInterval(updateLoad, 50);
+    }
+
+    function updateLoad() {
+        percentLoaded += .005;
+        updateLoaderBar();
+        if (percentLoaded >= 1) {
+            clearInterval(loadInterval);
+            stage.removeChild(loaderBar);
         }
     }
+
+    window.onload = init;
 
 })();
