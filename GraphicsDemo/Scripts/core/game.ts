@@ -1,42 +1,46 @@
 /// <reference path="_reference.ts" />
 
 (function () {
-    let canvas: HTMLElement = document.getElementById('canvas');
-    let stage: createjs.Stage;
 
-    function setupStage(): void {
-        stage = new createjs.Stage(canvas);
-        createjs.Ticker.framerate = 60;
-        createjs.Ticker.on('tick', gameLoop);
+    let stage = new createjs.Stage(document.getElementById('canvas'))
+    let direction = 1
+    let speed = 10
+    let circle = new createjs.Shape()
+    circle.graphics.beginStroke('#000')
+    circle.graphics.beginFill('#fff000')
+    circle.graphics.drawCircle(0, 0, 50)
+    circle.radius = 50
+    circle.x = 100
+    circle.y = 300
 
-        // semi-transparent screen
-        let screen = new createjs.Shape()
-        screen.graphics.beginFill(createjs.Graphics.getRGB(0, 0, 0, 0.6))
-            .drawRect(0, 0, stage.canvas.width, stage.canvas.height)
-        stage.addChild(screen)
+    stage.addChild(circle)
 
-        let g = new createjs.Graphics()
-            .beginStroke('#000')
-            .beginFill('#f00')
-            .drawRect(0, 0, 100, 100);
+    createjs.Ticker.on('tick', gameLoop)
+    createjs.Ticker.framerate = 60
 
-        let square: createjs.Shape = new createjs.Shape(g);
-        square.regX = square.regY = 50
-        square.x = stage.canvas.width / 2;
-        square.y = stage.canvas.height / 2;
-        stage.addChild(square)
-
-        createjs.Tween.get(square).to({ rotation: 360 }, 3000);
+    function updateCircle(): void {
+        let nextX = circle.x + (speed * direction)
+        if (nextX > stage.canvas.width - circle.radius) {
+            nextX = stage.canvas.width - circle.radius
+            direction *= -1
+        }
+        else if (nextX < circle.radius) {
+            nextX = circle.radius
+            direction *= -1
+        }
+        circle.nextX = nextX
     }
 
-    function gameLoop(): void {
-        main();
-        stage.update();
+    function renderCircle() {
+        circle.x = circle.nextX
     }
 
-    function main(): void {
-
+    function gameLoop(e) {
+        if (!e.paused) {
+            updateCircle()
+            renderCircle()
+            stage.update()
+        }
     }
 
-    window.onload = setupStage;
 })();

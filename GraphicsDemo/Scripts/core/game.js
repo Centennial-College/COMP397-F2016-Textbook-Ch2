@@ -1,33 +1,39 @@
 /// <reference path="_reference.ts" />
 (function () {
-    var canvas = document.getElementById('canvas');
-    var stage;
-    function setupStage() {
-        stage = new createjs.Stage(canvas);
-        createjs.Ticker.framerate = 60;
-        createjs.Ticker.on('tick', gameLoop);
-        // semi-transparent screen
-        var screen = new createjs.Shape();
-        screen.graphics.beginFill(createjs.Graphics.getRGB(0, 0, 0, 0.6))
-            .drawRect(0, 0, stage.canvas.width, stage.canvas.height);
-        stage.addChild(screen);
-        var g = new createjs.Graphics()
-            .beginStroke('#000')
-            .beginFill('#f00')
-            .drawRect(0, 0, 100, 100);
-        var square = new createjs.Shape(g);
-        square.regX = square.regY = 50;
-        square.x = stage.canvas.width / 2;
-        square.y = stage.canvas.height / 2;
-        stage.addChild(square);
-        createjs.Tween.get(square).to({ rotation: 360 }, 3000);
+    var stage = new createjs.Stage(document.getElementById('canvas'));
+    var direction = 1;
+    var speed = 10;
+    var circle = new createjs.Shape();
+    circle.graphics.beginStroke('#000');
+    circle.graphics.beginFill('#fff000');
+    circle.graphics.drawCircle(0, 0, 50);
+    circle.radius = 50;
+    circle.x = 100;
+    circle.y = 300;
+    stage.addChild(circle);
+    createjs.Ticker.on('tick', gameLoop);
+    createjs.Ticker.framerate = 60;
+    function updateCircle() {
+        var nextX = circle.x + (speed * direction);
+        if (nextX > stage.canvas.width - circle.radius) {
+            nextX = stage.canvas.width - circle.radius;
+            direction *= -1;
+        }
+        else if (nextX < circle.radius) {
+            nextX = circle.radius;
+            direction *= -1;
+        }
+        circle.nextX = nextX;
     }
-    function gameLoop() {
-        main();
-        stage.update();
+    function renderCircle() {
+        circle.x = circle.nextX;
     }
-    function main() {
+    function gameLoop(e) {
+        if (!e.paused) {
+            updateCircle();
+            renderCircle();
+            stage.update();
+        }
     }
-    window.onload = setupStage;
 })();
 //# sourceMappingURL=game.js.map
